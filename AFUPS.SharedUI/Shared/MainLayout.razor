@@ -1,0 +1,68 @@
+﻿@inherits LayoutComponentBase
+@code{
+    [Inject]
+    private IFileProcessManager fileProcessManager { get; set; }
+
+    [Inject]
+    private IAuth0Client auth0Client { get; set; }
+
+    private Timer timer { get; set; }
+
+    public InputFile filePicker { get; set; }
+
+    public EventCallback updateState { get; set; }
+
+    private async Task LoadFilesAsync(InputFileChangeEventArgs e)
+    {
+        var allFiles = e.GetMultipleFiles(100);
+        await StartTimer();
+        await fileProcessManager.AddFilesAsync(allFiles);
+        await updateState.InvokeAsync();
+    }
+
+    public async Task RefreshOnlyWorkingAsync(Timer timer)
+    {
+        if (fileProcessManager.GetState() == ProcessManagerState.Archiving
+            || fileProcessManager.GetState() == ProcessManagerState.Converting
+            || fileProcessManager.GetState() == ProcessManagerState.Uploading)
+        {
+            await updateState.InvokeAsync();
+            return;
+        }
+        await timer.DisposeAsync();
+        await updateState.InvokeAsync();
+    }
+
+    public async Task StartTimer(int dueTimeMS = 500, int periodMS = 1000)
+    {
+        timer = new Timer(_ => InvokeAsync(async () => await RefreshOnlyWorkingAsync(timer)));
+        timer.Change(TimeSpan.FromMilliseconds(dueTimeMS), TimeSpan.FromMilliseconds(periodMS));
+        await updateState.InvokeAsync();
+    }
+
+    public async Task DisposeTimer()
+    {
+        await timer.DisposeAsync();
+        await updateState.InvokeAsync();
+    }
+}
+
+<div style="display:none;">
+    <InputFile OnChange="@LoadFilesAsync" multiple @ref="filePicker" />
+</div>
+<div class="wrapper">
+
+    <SideBar />
+
+    <div class="main-panel">
+
+        <NavMenu />
+        <div class="content">
+            <CascadingValue Value="@this" IsFixed="true">
+                @Body
+            </CascadingValue>
+            <FooterLayout />
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,43 @@
+﻿@page "/"
+@using AFUPS.SharedUI.Components.Dashboard.Cards;
+@using AFUPS.SharedUI.Components.Uploader;
+
+@code{
+    [Inject]
+    private IFileProcessManager fileProcessManager { get; set; }
+
+    [Inject]
+    private IUserArchives userArchives { get; set; }
+
+    [Inject]
+    private IUserUploads userUploads { get; set; }
+}
+
+@if (fileProcessManager.GetState() == ProcessManagerState.Waiting && !fileProcessManager.FCPHasFile())
+{
+    <div class="row justify-content-center">
+
+        <div class="col-md-4 col-sm-12">
+            <PersistantReport/>
+        </div>
+
+        <div class="col-md-4 col-sm-12">
+            <TotalUploads TotalUploadGB="@userUploads.uploadedTotalSize()" TotalUploadeds="@userUploads.Get().Count()" />
+        </div>
+
+        <div class="col-md-4 col-sm-12">
+            <CreatedArchives ArchiveCount="@userArchives.ArchiveCount()" ArchiveSize="@userArchives.ArchivesTotalSize()" NotUploadedArchiveCount="@userArchives.NotUploadedArchives().Count()" />
+        </div>
+        <!--
+        <div class="col-md-3 col-sm-12">
+            <UnUploadedArchives NotUploadedArchiveCount="@@userArchives.NotUploadedArchives().Count()" />
+        </div>
+        -->
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <MultipleFileUploader FileSelected="() => StateHasChanged()" />
+    </div>
+</div>

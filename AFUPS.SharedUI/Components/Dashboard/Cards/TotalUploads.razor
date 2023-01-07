@@ -1,0 +1,38 @@
+﻿
+@code {
+    [Parameter]
+    public string TotalUploadGB { get; set; }
+    [Parameter]
+    public int TotalUploadeds { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        StateHasChanged();
+    }
+}
+
+<div class="card card-stats">
+    <div class="card-body ">
+        <div class="row">
+            <div class="col-5 col-md-4">
+                <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-globe text-warning"></i>
+                </div>
+            </div>
+            <div class="col-7 col-md-8">
+                <div class="numbers">
+                    <p class="card-category">Total Uploaded Size</p>
+                    <p class="card-title">@TotalUploadGB</p><p>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <hr>
+        <div class="stats">
+            <i class="nc-icon nc-sound-wave"></i>
+            @TotalUploadeds uploads.
+        </div>
+    </div>
+</div>

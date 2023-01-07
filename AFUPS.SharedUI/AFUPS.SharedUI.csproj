@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Components\" />
+    <None Remove="Pages\" />
+    <None Remove="Shared\" />
+    <None Remove="Components\Archive\" />
+    <None Remove="Components\Dashboard\" />
+    <None Remove="Components\Dashboard\Cards\" />
+    <None Remove="Components\Uploader\" />
+    <None Remove="Components\Provider\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\" />
+    <Folder Include="Pages\" />
+    <Folder Include="Shared\" />
+    <Folder Include="Components\Archive\" />
+    <Folder Include="Components\Dashboard\" />
+    <Folder Include="Components\Dashboard\Cards\" />
+    <Folder Include="Components\Uploader\" />
+    <Folder Include="Components\Provider\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AFUPS.Data\AFUPS.Data.csproj" />
+    <ProjectReference Include="..\AFUPS.SharedServices\AFUPS.SharedServices.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\assets\js\paper-dashboard.js" />
+    <Content Remove="wwwroot\assets\css\paper-dashboard.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\assets\js\paper-dashboard.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+    <None Include="wwwroot\assets\css\paper-dashboard.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+</Project>

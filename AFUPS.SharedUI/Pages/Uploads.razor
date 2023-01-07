@@ -1,0 +1,82 @@
+﻿@page "/uploads"
+@using AFUPS.SharedUI.Components
+@using AFUPS.SharedUI.Components.Archive
+
+@code{
+    private ArchiveContentDialog archiveContentDialog { get; set; }
+
+    [Inject]
+    private IShareVia ShareVia { get; set; }
+
+    [Inject]
+    private IUserUploads UserUploads { get; set; }
+
+    [Inject]
+    private IUserArchives UserArchives { get; set; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Reset();
+        }
+    }
+
+    private void Reset()
+    {
+        uploads = UserUploads.Get().OrderByDescending(o => o.LiveDate).ToList();
+        StateHasChanged();
+    }
+
+    private List<UserUpload> uploads = new List<UserUpload>();
+}
+
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Upload History</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            @if (uploads.Any())
+            {
+                foreach (var upload in uploads)
+                {
+                    <div class="col-md-4 col-sm-12">
+                        <UploadedFile userUpload="upload"
+                                      CanBeEreased="true"
+                                      ArchiveDetailModal="archiveContentDialog"
+                                      ShareUri="ShareVia.ShareUri"
+                                      Removed="() => Reset()" />
+                        <hr />
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <p>
+                        There is nothing to see,
+                        @if (UserArchives.ArchiveCount() < 1)
+                        {
+                            <a href="/">please create archive first, from the homepage.</a>
+                        }
+                        else
+                        {
+                            <a href="/archives">but you have some archive ready for uploading click here.</a>
+                        }
+
+                    </p>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+
+<ArchiveContentDialog @ref="archiveContentDialog" />
+

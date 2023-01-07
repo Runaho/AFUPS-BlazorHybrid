@@ -1,0 +1,74 @@
+﻿@code {
+    [Parameter]
+    public FileConvertingProcess ConvertedFile { get; set; }
+
+    bool IsEnded => ConvertedFile.ConvertingPercentage == 100;
+
+    [Inject]
+    private IFileProcessManager fileProcessManager { get; set; }
+
+    [Parameter]
+    public EventCallback<FileConvertingProcess> RemoveFile { get; set; }
+
+}
+
+@if (ConvertedFile == null)
+{
+    return;
+}
+
+@{
+    string extension = "";
+    try
+    {
+        extension = Path.GetExtension(ConvertedFile.FileName);
+    }
+    catch (Exception ex)
+    {
+
+    }
+    string filename = ConvertedFile.FileName.Replace(extension, string.Empty);
+
+    string progressColumn = (IsEnded && fileProcessManager.GetState() != ProcessManagerState.Uploading) ? "col-3" : "col-5";
+}
+<tr class="d-flex align-items-center justify-content-center">
+    <td class="col-5">@filename</td>
+    <td class="col-2">@extension</td>
+    <td class="@progressColumn">
+        @ConvertedFile.ReadableSize
+        @if (ConvertedFile.ConvertingPercentage < 100)
+        {
+            <progress style="width:60%" value="@ConvertedFile.UploadedBytes" max="@ConvertedFile.Size"></progress>
+            <span class="text-muted"> @(ConvertedFile.ReadableUploadedSize) / @(ConvertedFile.ReadableSize)</span>
+        }
+    </td>
+    @if (IsEnded && fileProcessManager.GetState() != ProcessManagerState.Uploading)
+    {
+        <td class="col-2">
+
+            <btn @onclick="() => RemoveFile.InvokeAsync(ConvertedFile)" class="btn btn-sm btn-outline-danger btn-round btn-icon"><i class="nc-icon nc-simple-delete"></i></btn>
+        </td>
+    }
+
+</tr>
+
+
+
+@*
+
+    <div class="row row d-flex justify-content-center align-items-center">
+        <p class="col-md-5">
+            @ConvertedFile.FileName
+        </p>
+        <p class="col-md-5">
+            <progress style="width:60%" value="@ConvertedFile.UploadedBytes" max="@ConvertedFile.Size"></progress>
+            <span class="text-muted"> @(ConvertedFile.ReadableUploadedSize) / @(ConvertedFile.ReadableSize)</span>
+        </p>
+        @if (IsEnded && fileProcessManager.GetState() != ProcessManagerState.Uploading)
+        {
+            <p class="col-2">
+                <btn @onclick="()=>RemoveFile.InvokeAsync(ConvertedFile)" class="btn btn-sm btn-outline-danger btn-round btn-icon"><i class="nc-icon nc-simple-delete"></i></btn>
+            </p>
+        }
+    </div>
+*@

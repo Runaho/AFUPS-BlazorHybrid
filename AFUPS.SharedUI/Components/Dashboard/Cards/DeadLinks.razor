@@ -1,0 +1,31 @@
+﻿@code {
+    [Parameter]
+    public int DeadLinksCount { get; set; }
+}
+
+
+<div class="card card-stats">
+    <div class="card-body ">
+        <div class="row">
+            <div class="col-5 col-md-4">
+                <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-vector text-danger"></i>
+                </div>
+            </div>
+            <div class="col-7 col-md-8">
+                <div class="numbers">
+                    <p class="card-category">Dead Links</p>
+                    <p class="card-title">@DeadLinksCount</p><p>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer ">
+        <hr>
+        <div class="stats">
+            <i class="nc-icon nc-sound-wave"></i>
+            In the last hour
+        </div>
+    </div>
+</div>

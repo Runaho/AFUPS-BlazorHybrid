@@ -1,0 +1,92 @@
+﻿@page "/archives"
+@using AFUPS.SharedUI.Components
+@using AFUPS.SharedUI.Components.Archive
+
+@code {
+    private List<UserArchive> userArchives { get; set; } = new List<UserArchive>();
+
+    private ArchiveContentDialog archiveContentDialog { get; set; }
+
+    [Inject]
+    private IShareVia ShareVia { get; set; }
+
+    [Inject]
+    private IUserArchives UserArchives { get; set; }
+
+    [Inject]
+    private IUploaderProviders uploaderProviders { get; set; }
+
+    [Inject]
+    private IFileProcessManager fileProcessManager { get; set; }
+
+    private List<UploaderProvider> _UploaderProviders => uploaderProviders.GetUploaderProviders();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Reset();
+
+            if (fileProcessManager.GetState() == ProcessManagerState.Uploading)
+            {
+                UploadControl();
+            }
+        }
+    }
+
+    private async void UploadControl()
+    {
+        if (fileProcessManager.GetState() != ProcessManagerState.Ended && fileProcessManager.GetState() != ProcessManagerState.Waiting)
+        {
+            UploadControl();
+        }
+        else
+        {
+            Reset();
+        }
+    }
+
+    private async void Reset()
+    {
+        userArchives = UserArchives.Get().OrderByDescending(o => o.CreateDateTime).ToList();
+        StateHasChanged();
+    }
+
+
+}
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Archives</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            @if (userArchives.Any())
+            {
+                foreach (var archive in userArchives)
+                {
+                    <div class="col-md-4 col-sm-12">
+                        <UserArchiveDetail archive="@archive"
+                                           CanBeEreased="true"
+                                           ArchiveContentDialog="@archiveContentDialog"
+                                           ShareUri="ShareVia.ShareUri" uploaderProviders="@_UploaderProviders"
+                                           Removed="() => Reset()" />
+                        <hr />
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <p>There is nothing to see, <a href="/">please create archive from homepage.</a></p>
+                </div>
+            }
+
+
+        </div>
+    </div>
+</div>
+
+<ArchiveContentDialog @ref=" archiveContentDialog" />
+
+

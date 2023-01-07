@@ -1,0 +1,17 @@
+﻿.logo {
+    background: rgb(8,199,214);
+    background: -moz-linear-gradient(158deg, rgba(8,199,214,1) 0%, rgba(2,2,62,0.9066220238095238) 69%);
+    background: -webkit-linear-gradient(158deg, rgba(8,199,214,1) 0%, rgba(2,2,62,0.9066220238095238) 69%);
+    background: linear-gradient(158deg, rgba(8,199,214,1) 0%, rgba(2,2,62,0.9066220238095238) 69%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#08c7d6",endColorstr="#02023e",GradientType=1);
+}
+
+.table td {
+   border-top: none !important;
+}
+
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(189, 231, 232, 0.34) !important;
+}
+

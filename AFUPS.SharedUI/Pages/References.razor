@@ -1,0 +1,47 @@
+﻿@page "/references"
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Referances</h4>
+        <hr />
+    </div>
+    <div class="card-body">
+        <h5>Resources</h5>
+
+        <ul class="list-unstyled">
+            <li><a href="https://www.creative-tim.com/product/paper-dashboard" rel="nofollow">HTML Design</a> - Creative Tim</li>
+            <li><a href="https://nucleoapp.com/free-icons" rel="nofollow">Icons</a> - 100 Nucleo Icon</li>
+            <li><a href="https://codepen.io/jotavejv/pen/bRdaVJ" rel="nofollow">Upload Form</a> - Codepen.io Jotavejv</li>
+            <li><a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/hybrid/tutorials/maui?view=aspnetcore-6.0" rel="nofollow">Blazor MAUI</a> - Creating cross platform app's on .NET Blazor.</li>
+            <li><a href="https://learn.microsoft.com/en-us/mobile-blazor-bindings/walkthroughs/shared-web-ui" rel="nofollow">Blazor Shared UI</a> - Razor Component Library</li>
+            <li><a href="https://www.namecheap.com/logo-maker/app/" rel="nofollow">Logo Maker</a> - Branding & Logo Designs</li>
+            <li><a href="https://studio.app-mockup.com/" rel="nofollow">Mockup APP</a> - Store Image Mockups</li>
+        </ul>
+
+        <hr />
+
+        <h5>Default File Hosting Providers</h5>
+
+        <ul class="list-unstyled">
+            @foreach (var provider in DefaultUploaderProviders.UploaderProviders)
+            {
+                <li><a href="@provider.TermsUrl" rel="nofollow">@provider.Name (Click for terms)</a></li>
+            }
+        </ul>
+
+        <hr />
+
+        <h5>Features</h5>
+
+        <ul dir="auto">
+            <li>Upload multiple files via converting files to archive.</li>
+            <li>Save locally archives.</li>
+            <li>Easy share and re-upload/upload another provider.</li>
+            <li>Upload history & Calculating total upload size.</li>
+            <li>Archive history & Calculating total created archive size.</li>
+            <li>Zero data collecting.</li>
+            <li>Zero AD Policy.</li>
+        </ul>
+
+        <hr />
+    </div>
+</div>

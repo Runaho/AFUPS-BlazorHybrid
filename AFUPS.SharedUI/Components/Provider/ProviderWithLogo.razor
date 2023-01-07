@@ -1,0 +1,46 @@
+﻿
+@code {
+    [Inject]
+    private IUploaderProviders uploaderProviders { get; set; }
+
+    private UploaderProvider provider { get; set; } = new UploaderProvider { };
+
+    [Parameter]
+    public int? ProviderId
+    {
+        get
+        {
+            return provider.ProviderId;
+        }
+        set
+        {
+            provider = uploaderProviders.GetUploaderProvider((int)value);
+            StateHasChanged();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    //protected override void OnParametersSet()
+    //{
+    //}
+
+}
+
+@{
+    if (provider == null)
+        return;
+}
+
+<div class="container align-items-center"  style="background-color: rgb(241, 241, 241); padding: 1rem; margin: 0.4rem 0rem; box-shadow: 0 3px 10px rgb(0 0 0 / 0.2); height:150px;">
+
+    @if (!string.IsNullOrEmpty(provider.Logo))
+    {
+        <img src="@provider.Logo" style="max-height:80%; width:auto; margin: 0.5rem 0px;" />
+    }
+    <br />
+    <p>@provider.Name</p>
+</div>

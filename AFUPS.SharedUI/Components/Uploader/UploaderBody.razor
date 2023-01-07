@@ -1,0 +1,162 @@
+﻿@using AFUPS.SharedServices;
+@using Microsoft.JSInterop;
+@using ByteSizeLib
+
+@code {
+    [Parameter]
+    public ProcessManagerState State { get; set; }
+
+    [Parameter]
+    public EventCallback StartArchive { get; set; }
+
+    [Parameter]
+    public EventCallback OpenFileSelector { get; set; }
+
+    [Parameter]
+    public EventCallback StartUpload { get; set; }
+
+    [Parameter]
+    public double maxFileSize { get; set; } = 1024;
+
+    private string ReadableMaxFileSize => ByteSize.FromBytes(maxFileSize).ToString();
+
+    [Parameter]
+    public List<UploaderProvider> uploaderProviders { get; set; } = new List<UploaderProvider>();
+
+    [Inject]
+    private IFileProcessManager fileProcessManager { get; set; }
+
+    [Inject]
+    private IUserUploads userUploads { get; set; }
+
+    [Inject]
+    private NavigationManager NavManager { get; set; }
+
+
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; }
+
+    public int SelectedProviderId { get; set; }
+
+
+
+    private async void InitilizeFileUploaderScripts()
+    {
+        await JsRuntime.InvokeVoidAsync(identifier: "import", "/_content/AFUPS.SharedUI/assets/uploader.js");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            InitilizeFileUploaderScripts();
+        }
+    }
+
+    public void ReRender() => StateHasChanged();
+}
+<div class="col-12" align="center">
+
+    @switch (State)
+    {
+        case ProcessManagerState.Converting:
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+            </div>
+            break;
+        case ProcessManagerState.Selecting:
+        case ProcessManagerState.Converted:
+
+            var totalFileSize = fileProcessManager.GetFiles().Sum(c => c.Size);
+            if (fileProcessManager.GetFiles().Count() <= 0)
+            {
+                <div>
+                    <i class="nc-icon nc-box-2"></i>
+                    <p class="pointer-none">Add file from below.</p>
+                </div>
+            }
+            else if (totalFileSize >= maxFileSize)
+            {
+                <div>
+                    <i class="nc-icon nc-box-2"></i>
+                    <p class="pointer-none">You have exceeded the maximum file size "@ReadableMaxFileSize" please remove some files.</p>
+                </div>
+            }
+            else
+            {
+                <div @onclick="() => StartArchive.InvokeAsync()">
+                    <i class="nc-icon nc-box-2 col-12"></i>
+                    <a class="pointer-none btn btn-info" style="color:white;">Start Archiving</a>
+                </div>
+            }
+            break;
+
+        case ProcessManagerState.Archiving:
+
+            <div class="justify-content-center">
+                <div class="col-3">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                    <p>Archiving Please Wait</p>
+                </div>
+            </div>
+
+            break;
+
+        case ProcessManagerState.Archived:
+
+            <div>
+
+                <select class="form-control col-md-4 col-sm-6" @bind="@SelectedProviderId">
+                    <option value="0" selected>Select Provider</option>
+                    @foreach (var provider in uploaderProviders)
+                    {
+                        <option value="@provider.ProviderId">@provider.Name</option>
+                    }
+                </select>
+
+                <br />
+                @if (SelectedProviderId != 0)
+                {
+                    <span @onclick="() => StartUpload.InvokeAsync()">
+                        <i class="UploadButton nc-icon nc-cloud-upload-94"></i> <br />
+                        <a class="pointer-none btn btn-info" style="color:white;">Start Uploading</a>
+                    </span>
+                }
+
+            </div>
+
+            break;
+
+        case ProcessManagerState.Uploading:
+            <div class="justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                </div>
+                <p>Uploading please wait.</p>
+            </div>
+
+            break;
+        case ProcessManagerState.Ended:
+            <div>
+                <p>Upload ended!</p>
+                <span @onclick="async () =>
+                                {
+                                    fileProcessManager.Reset();
+                                    NavManager.NavigateTo('/'.ToString(), true, true);
+                                }">
+                    <a class="pointer-none btn btn-info" style="color:white;"> Click here for reset</a>
+                </span>
+            </div>
+
+            break;
+
+        default:
+            <div @onclick="() => OpenFileSelector.InvokeAsync()">
+                <i class="nc-icon nc-single-copy-04"></i><br />
+                <a class="pointer-none btn btn-info" style="color:white;"> Click for Browse files </a>
+            </div>
+            break;
+    }
+</div>

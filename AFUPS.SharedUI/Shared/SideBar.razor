@@ -1,0 +1,86 @@
+﻿@using Microsoft.AspNetCore.Components.Routing;
+@using Microsoft.JSInterop;
+@code{
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; }
+
+    [Inject]
+    private AppDefaults AppDefaults { get; set; }
+
+    [Inject]
+    private IFileProcessManager fileProcessManager { get; set; }
+
+    protected override void OnInitialized() => NavigationManager.LocationChanged += (s, e) => locationChanged();
+
+    private async void locationChanged()
+    {
+        StateHasChanged();
+
+        if (fileProcessManager.GetState() == ProcessManagerState.Ended)
+        {
+            fileProcessManager.Reset();
+        }
+
+        await JsRuntime.InvokeAsync<object>("TriggerNavClose");
+    }
+    bool IsActive(string href, NavLinkMatch navLinkMatch = NavLinkMatch.Prefix)
+    {
+        var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLower();
+        return relativePath == href;
+    }
+
+    string GetActive(string href, NavLinkMatch navLinkMatch = NavLinkMatch.Prefix) => IsActive(href, navLinkMatch) ? "active" : "";
+}
+<div class="sidebar" data-color="white" data-active-color="danger">
+    <div class="logo">
+        <a class="simple-text logo-normal">
+            <div class="logo-image-big text-center">
+                <img style="max-width:70%;" src="@AppDefaults.LogoPath">
+            </div>
+        </a>
+    </div>
+    <div class="sidebar-wrapper">
+        <ul class="nav">
+            <li class="@GetActive("", NavLinkMatch.All)">
+                <a href="/">
+                    <i class="nc-icon nc-bank"></i>
+                    <p>Home</p>
+                </a>
+            </li>
+            <li class="@GetActive("uploads", NavLinkMatch.All)">
+                <a href="/Uploads">
+                    <i class="nc-icon nc-cloud-upload-94"></i>
+                    <p>Uploads</p>
+                </a>
+            </li>
+            <li class="@GetActive("archives", NavLinkMatch.All)">
+                <a href="/archives">
+                    <i class="nc-icon nc-box"></i>
+                    <p>Archives</p>
+                </a>
+            </li>
+            <li class="@GetActive("consent", NavLinkMatch.All)">
+                <a href="/consent">
+                    <i class="nc-icon nc-alert-circle-i"></i>
+                    <p>Consent</p>
+                </a>
+            </li>
+            <li class="@GetActive("references", NavLinkMatch.All)">
+                <a href="/references">
+                    <i class="nc-icon nc-world-2"></i>
+                    <p>References</p>
+                </a>
+            </li>
+
+            <li style="position: absolute; width: 100%; bottom: 25px;">
+                <a href="/coffe">
+                    <i class="nc-icon nc-badge"></i>
+                    <p>SUPPORT US</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

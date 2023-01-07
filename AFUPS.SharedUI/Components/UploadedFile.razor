@@ -1,0 +1,25 @@
+﻿@using AFUPS.SharedUI.Components.Provider;
+
+<div class="row align-items-center">
+    <div class="col-12 text-center">
+        <h6><i class="nc-icon nc-box" style="margin-right:5px;font-size:1em"></i> @(string.IsNullOrEmpty(userUpload.Name)? "My Archive (Click For Rename)" : userUpload.Name)</h6>
+
+        <ProviderWithLogo ProviderId="userUpload.ProviderId" />
+
+        <div class="row">
+            <span class="text-muted text-left col-7"><small>Uploaded At : @(userUpload.LiveDate.ToString("dd/MM/yyyy HH:mm"))</small></span>
+            <span class="text-muted text-right col-5"><small>Size : @(userUpload.ReadableSize)</small></span>
+            <span class="text text-center col-12"><span class="badge badge-info">Archive Online.</span></span>
+        </div>
+
+        <btn class="mr-2 btn btn-lg btn-outline-success btn-icon" @onclick="()=>ShareUri.InvokeAsync(userUpload.DownloadUrl)"><i class="nc-icon nc-share-66"></i></btn>
+        @if (ArchiveDetailModal != null)
+        {
+            <btn class="mr-2 btn btn-lg btn-outline-info btn-icon" @onclick="()=>OpenDialog()"><i class="nc-icon nc-zoom-split nc-medium"></i></btn>
+        }
+        @if (CanBeEreased)
+        {
+            <btn class="btn btn-lg btn-outline-danger btn-icon" @onclick="()=>Remove()"><i class="nc-icon nc-simple-delete"></i></btn>
+        }
+    </div>
+</div>

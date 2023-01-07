@@ -1,0 +1,91 @@
+﻿@using Uploader;
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="title">File Uploader</h5>
+    </div>
+    <div class="card-body">
+
+        <div class="upload">
+            <div class="upload-files">
+                <header>
+                    <p>
+                        <i class="nc-icon nc-cloud-upload-94" aria-hidden="true"></i>
+                        <span class="up">up</span>
+                        <span class="load">load</span>
+                    </p>
+                </header>
+                <div class="body">
+
+                    @if (consentService.ConsentIsAccepted())
+                    {
+                        <UploaderBody OpenFileSelector="()=> OpenFileSelector()"
+                                      State="fileProcessManager.GetState()"
+                                      StartArchive="()=> GenerateArchiveAsync()"
+                                      StartUpload="()=> StartUploading()"
+                                      uploaderProviders="UploaderProviders.GetUploaderProviders()"
+                                      maxFileSize="maxFileSize"
+                                      @ref="uploaderBody" />
+                    }
+                    else
+                    {
+                        <div class="container col-lg-4 col-md-12">
+                            <div>
+                                <blockquote><p class="blockquote blockquote-primary"><a href="/consent" style="color: #b64d4d;">You cannot use the app without reading the consent text. To read it, go to the "Consent" Page or click here.</a></p></blockquote>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+
+                <footer class="hasFiles">
+                    <div class="col-12 p-3">
+                        @if (fileProcessManager.FCPHasFile())
+                        {
+                            @switch (fileProcessManager.GetState())
+                            {
+                                case ProcessManagerState.Waiting:
+                                case ProcessManagerState.Converting:
+                                case ProcessManagerState.Converted:
+                                    <div class="divider">
+                                        <span><ar>FILES</ar></span>
+                                    </div>
+                                    <div>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr class="d-flex">
+                                                    <th class="col-5">Name</th>
+                                                    <th class="col-2">Type</th>
+                                                    <th class="col-4">Size</th>
+                                                    <th class="col-1"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var file in fileProcessManager.GetFiles())
+                                                {
+                                                    <SelectedFile ConvertedFile="file" RemoveFile="RemoveFile" />
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    break;
+                            }
+                        }
+
+                        <SelectedFileSummary maxAllowedFiles="@maxAllowedFiles"
+                                             maxFileSize="maxFileSize"
+                                             OpenFileSelector="OpenFileSelector" />
+
+                    </div>
+                </footer>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+

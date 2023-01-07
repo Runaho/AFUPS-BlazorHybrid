@@ -1,0 +1,41 @@
+﻿@if (ShowDialog)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Archive Detail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="@Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <label>
+                                Archive : @Archive.Name <br />
+                            </label>
+                        </div>
+
+                        <div class="form-group col-12">
+                            <label>Files : (@Files.Count)</label>
+                            <br />
+                            <ul>
+                                @foreach (var file in Files)
+                                {
+                                    <li>@file.Name - @(file.ReadableSize)</li>
+                                }
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="@Close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

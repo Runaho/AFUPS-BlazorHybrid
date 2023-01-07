@@ -1,0 +1,95 @@
+﻿@using AFUPS.SharedUI.Components.Provider;
+@code{
+    Dictionary<string, object> archiveBtnDisabled = new Dictionary<string, object> { { "disabled", "disabled" } };
+}
+
+@{ if (archiveSelected && !string.IsNullOrEmpty(SelectedProvider))
+    {
+        archiveBtnDisabled = new Dictionary<string, object> { };
+    }
+}
+
+<style>
+    .nc-theme-color {
+        color: #0f7d9e !important;
+    }
+</style>
+
+<div class="row align-items-center">
+    <div class="col-md-12 text-center">
+
+        <h6><i class="nc-icon nc-box" style="margin-right:5px;font-size:1em"></i>@archive.Name</h6>
+
+        @if (upload != null)
+        {
+            <ProviderWithLogo ProviderId="upload.ProviderId" />
+        }
+        else
+        {
+            <span class="text"><span class="badge badge-warning">Archive Not Uploaded</span></span>
+        }
+
+        <div class="row">
+            @if (upload != null)
+            {
+                <span class="text-muted text-left col-7"><small>Uploaded At : @(upload.LiveDate.ToString("dd/MM/yyyy HH:mm"))</small></span>
+            }
+            else
+            {
+                <span class="text-muted text-left col-7"><small>Created At : @(archive.CreateDateTime.ToString("dd/MM/yyyy HH:mm"))</small></span>
+            }
+            <span class="text-muted text-right col-5"><small>Size : @(archive.ReadableSize)</small></span>
+        </div>
+
+        @if (fileProcessManager.GetState() == ProcessManagerState.Uploading)
+        {
+            var genArch = fileProcessManager.GetGeneratedArchive();
+            if (genArch?.ArchiveFileID == archive.ArchiveFileId)
+            {
+                <div class="container" style="padding-top:2em;">
+
+                    <div class="d-flex align-items-center">
+                        <span>Right now this archive uploading please wait... &nbsp;&nbsp;</span>
+                        <div class="spinner-border text-primary ms-auto" role="status" aria-hidden="true"></div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="row align-items-center">
+                <div class="col-10 ps-4">
+                    <select class="form-control" value="@(archiveSelected?SelectedProvider:string.Empty)" @onchange="(ChangeEventArgs e)=>SelectForUpload(archive,e.Value.ToString())">
+                        <option value="">Providers</option>
+                        @foreach (var provider in uploaderProviders)
+                        {
+                            if (provider.ProviderId == upload?.ProviderId)
+                                continue;
+                            <option value="@provider.ProviderId">@provider.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-2 p-0">
+                    <btn class="btn btn-md btn-warning btn-icon" @attributes="archiveBtnDisabled" @onclick="()=>ReUploadAsync(archive)"><i class="nc-icon nc-cloud-upload-94 nc-medium"></i></btn>
+                </div>
+            </div>
+
+            <div class="text-center">
+
+                @if (upload != null)
+                {
+                    <btn class="btn btn-lg btn-outline-success btn-icon" @onclick="()=>ShareUri.InvokeAsync(upload.DownloadUrl)"><i class="nc-icon nc-share-66"></i></btn>
+                }
+
+                @if (ArchiveContentDialog != null)
+                {
+                    <btn class="btn btn-lg btn-outline-info btn-icon" @onclick="()=>OpenDialog(archive)"><i class="nc-icon nc-zoom-split nc-medium"></i></btn>
+                }
+                @if (CanBeEreased)
+                {
+                    <btn class="btn btn-lg btn-outline-danger btn-icon" @onclick="() => RemoveArchive(archive)"><i class="nc-icon nc-simple-delete nc-medium"></i></btn>
+                }
+            </div>
+        }
+    </div>
+</div>

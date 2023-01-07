@@ -1,0 +1,42 @@
+﻿
+@code {
+    [Parameter]
+    public string TotalUploadGB { get; set; }
+
+    [Parameter]
+    public int TotalUploads { get; set; }
+
+    [Parameter]
+    public int NotUploaded { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        StateHasChanged();
+    }
+}
+
+<div class="card card-stats">
+    <div class="card-body ">
+        <div class="row">
+            <div class="col-5 col-md-4">
+                <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-sound-wave text-warning"></i>
+                </div>
+            </div>
+            <div class="col-7 col-md-8">
+                <div class="numbers">
+                    <p class="card-category">Analyzes</p>
+                    <p class="card-title">@TotalUploadGB <span data-toggle="tooltip" title="Uploaded Total Size">OK</span></p>
+                    <p class="card-title">@NotUploaded <span data-toggle="tooltip" title="Not Uploded Archives">X</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <hr>
+        <div class="stats">
+            <i class="nc-icon nc-sound-wave"></i>
+            @TotalUploads uploads.
+        </div>
+    </div>
+</div>

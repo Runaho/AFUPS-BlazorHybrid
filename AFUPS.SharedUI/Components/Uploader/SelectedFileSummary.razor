@@ -1,0 +1,130 @@
+﻿
+@using AFUPS.SharedUI.Components.Archive
+@using ByteSizeLib
+
+@code {
+    [Inject]
+    private IFileProcessManager FileProcessManager { get; set; }
+
+    [Inject]
+    private IShareVia ShareVia { get; set; }
+
+    [Parameter]
+    public int maxAllowedFiles { get; set; } = 10;
+
+    [Parameter]
+    public double maxFileSize { get; set; } = 1024;
+
+    [Parameter]
+    public EventCallback OpenFileSelector { get; set; }
+
+    private ArchiveContentDialog archiveContentDialog { get; set; }
+
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
+        }
+    }
+
+    private string ReadableMaxFileSize => ByteSize.FromBytes(maxFileSize).ToString();
+}
+
+@{
+    if (FileProcessManager.GetState() == ProcessManagerState.Waiting)
+        return;
+}
+
+<div class="divider" style="border-top: solid 4px #468dab4a;border-bottom:none; margin-bottom: 2vh;"></div>
+<div class="col-12" align="center">
+
+    <div class="row">
+
+        @switch (FileProcessManager.GetState())
+        {
+            case ProcessManagerState.Archiving:
+                break;
+            case ProcessManagerState.Archived:
+                var archive = FileProcessManager.GetGeneratedArchive();
+                <div class="col-12" align="center">
+                    <p>Your archive is ready please upload via selecting provider on top. Size : @archive.ReadableSize</p>
+                </div>
+                break;
+            case ProcessManagerState.Uploading:
+                <div class="col-12" align="center">
+                    <p>We are trying to upload your archive please wait.</p>
+                </div>
+                break;
+            case ProcessManagerState.Ended:
+                <div class="col-12">
+                    <div class="row align-items-center justify-content-center">
+                        <div class="col-md-6 col-sm-12">
+                            <ArchiveContentDialog @ref="archiveContentDialog" />
+                            <UploadedFile userUpload="FileProcessManager.UploadDetails()" ArchiveDetailModal="archiveContentDialog" CanBeEreased="false" ShareUri="ShareVia.ShareUri" />
+                        </div>
+                    </div>
+                </div>
+                break;
+            default:
+
+                @if (!FileProcessManager.IsConverting())
+                {
+                    <div class="col-6">
+                        <p>
+                            Total @FileProcessManager.GetFiles().Count() File Selected
+                        </p>
+                    </div>
+                    <div class="col-6">
+                        <p>
+                            Total Size  @FileProcessManager.ReadeableTotalConvertedFileSize()
+                        </p>
+                    </div>
+                    <div class="col-12 text-right">
+                        <p>
+                            @if (FileProcessManager.GetState() != ProcessManagerState.Uploading)
+                            {
+                                var totalFileSize = FileProcessManager.GetFiles().Sum(c => c.Size);
+                                if (totalFileSize >= maxFileSize)
+                                {
+                                    <span>You have exceeded the maximum file size "@ReadableMaxFileSize" please remove some files.</span>
+                                }
+                                else if (FileProcessManager.GetFiles().Count() < maxAllowedFiles)
+                                {
+                                    <span> You can choose @(maxAllowedFiles - FileProcessManager.GetFiles().Count() ) more files. <btn @onclick="()=> OpenFileSelector.InvokeAsync()" class="btn btn-sm btn-outline-success btn-round btn-icon"><i class="nc-icon nc-simple-add"></i></btn></span>
+                                }
+                                else if (FileProcessManager.GetFiles().Count() > maxAllowedFiles)
+                                {
+                                    <b>Total allowed file count @maxAllowedFiles you must remove some files.</b>
+                                }
+                                else
+                                {
+                                    <span>You can not add more file but you can upload.</span>
+                                }
+
+                                if (!string.IsNullOrEmpty(FileProcessManager.Error()))
+                                {
+                                    <span>@FileProcessManager.Error()</span>
+                                }
+                            }
+                            else
+                            {
+                                <span>Please wait...</span>
+                            }
+                        </p>
+                    </div>
+
+                }
+                else
+                {
+                    <p class="col-12">File is progressing.</p>
+                }
+
+                break;
+        }
+
+
+
+    </div>
+</div>

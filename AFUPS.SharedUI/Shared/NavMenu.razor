@@ -1,0 +1,80 @@
+﻿@code{
+    [Inject]
+    private AppDefaults AppDefaults { get; set; }
+
+    [Inject]
+    private IAuth0UserService Auth0UserService { get; set; }
+
+    [Inject]
+    private IAuth0Client Auth0Client { get; set; }
+
+    [Inject]
+    private IPromptService promptService { get; set; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    private Auth0User Auth0User => Auth0UserService.Get0User();
+
+    private async Task Login()
+    {
+        var user = await Auth0Client.LoginAsync();
+        if (user.IsError)
+        {
+            await promptService.ShowAlertAsync("Auth", "Login failed.");
+        }
+    }
+
+    private async Task Logout()
+    {
+        await Auth0Client.LogoutAsync();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        Auth0Client.AuthClientEventCallback += () => StateHasChanged();
+        return base.OnInitializedAsync();
+    }
+}
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+    <div class="container-fluid">
+        <div class="navbar-wrapper">
+            <div class="navbar-toggle">
+                <button type="button" class="navbar-toggler">
+                    <span class="navbar-toggler-bar bar1"></span>
+                    <span class="navbar-toggler-bar bar2"></span>
+                    <span class="navbar-toggler-bar bar3"></span>
+                </button>
+            </div>
+        </div>
+        <div class="justify-content-end align-items-end" style="text-align: right;">
+
+            @if (Auth0User.user?.User != null)
+            {
+                <a class="nav-link btn-rotate dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                    <img src="@Auth0User.Picture" style="max-height: 3vh; margin-right: 1vh;"> @Auth0User.Name
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-right" style="right:2vh;" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="#">
+                        <i class="nc-icon nc-email-85"></i> Private Uploads
+                    </a>
+                    <a href="javascript:;" @onclick="async () => { await Logout(); }" class="dropdown-item text-danger">
+                        <i class="nc-icon nc-button-power"></i> Log out
+                    </a>
+                </div>
+
+            }
+            else
+            {
+                <a class="nav-link btn-rotate" href="javascript:;" @onclick="async () => { await Login(); }">
+                    <i class="nc-icon nc-single-02"></i> Login
+                </a>
+            }
+
+        </div>
+    </div>
+</nav>
+<!-- End Navbar -->

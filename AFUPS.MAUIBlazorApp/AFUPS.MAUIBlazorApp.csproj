@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+	<PropertyGroup>
+		<TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+		<OutputType>Exe</OutputType>
+		<RootNamespace>AFUPS.MAUIBlazorApp</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<EnableDefaultCssItems>false</EnableDefaultCssItems>
+		<!-- Display name -->
+		<ApplicationTitle>AFUP</ApplicationTitle>
+		<!-- App Identifier 
+		<ApplicationId>AndroidApplicationId</ApplicationId>
+		-->
+		<ApplicationId>com.afup.blazormaui</ApplicationId>
+		<ApplicationIdGuid>B9E4B632-CD87-4663-BF24-CD10256FC4F0</ApplicationIdGuid>
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.18</ApplicationDisplayVersion>
+		<ApplicationVersion>8</ApplicationVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<UserSecretsId>10e85fca-de06-4053-bbb4-20f61be6310e</UserSecretsId>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
+		<CreatePackage>false</CreatePackage>
+		<CodesignKey>iPhone Developer</CodesignKey>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-ios|AnyCPU'">
+		<CreatePackage>true</CreatePackage>
+		<CodesignProvision>Automatic</CodesignProvision>
+		<CodesignKey>iPhone Distribution</CodesignKey>
+		<ArchiveOnBuild>true</ArchiveOnBuild>
+		<BuildIpa>true</BuildIpa>
+		<IpaIncludeArtwork>true</IpaIncludeArtwork>
+		<IpaPackageName></IpaPackageName>
+		<ServerAddress>$(ServerAddress)</ServerAddress>
+		<ServerUser>$(ServerUser)</ServerUser>
+		<ServerPassword>$(ServerPassword)</ServerPassword>
+		<TcpPort>$(TcpPort)</TcpPort>
+	</PropertyGroup>
+	<ItemGroup>
+		<!-- App Icon -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#02023E" />
+		<!-- Splash Screen -->
+		<!--<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#02023E" BaseSize="128,128" />-->
+		<!-- Images -->
+		<MauiFont Include="Resources\Fonts\*" />
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+		<MauiSplashScreen Include="Resources\Splash\default_monochrome_white.svg" Color="#02023E" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="SQLitePCLRaw.provider.e_sqlite3.netstandard11" Version="1.1.14" />
+		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
+		<PackageReference Include="IdentityModel.OidcClient" Version="5.1.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\AFUPS.Data\AFUPS.Data.csproj" />
+		<ProjectReference Include="..\AFUPS.SharedServices\AFUPS.SharedServices.csproj" />
+		<ProjectReference Include="..\AFUPS.SharedUI\AFUPS.SharedUI.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="SQLitePCLRaw.provider.e_sqlite3.netstandard11" />
+		<None Remove="SQLitePCLRaw.bundle_green" />
+		<None Remove="Microsoft.Extensions.Configuration.UserSecrets" />
+		<None Remove="Services\" />
+		<None Remove="Resources\Splash\default-monochrome-white.svg" />
+		<None Remove="Resources\Images\" />
+		<None Remove="Resources\Raw\" />
+		<None Remove="IdentityModel.OidcClient" />
+		<None Remove="Auth0\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Services\" />
+		<Folder Include="Resources\Images\" />
+		<Folder Include="Resources\Raw\" />
+		<Folder Include="Auth0\" />
+	</ItemGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
+		<AndroidSigningKeyStore>$(AndroidSigningKeyStore)</AndroidSigningKeyStore>
+		<AndroidSigningStorePass>$(AndroidSigningStorePass)</AndroidSigningStorePass>
+		<AndroidSigningKeyAlias>$(AndroidSigningKeyAlias)</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>$(AndroidSigningStorePass)</AndroidSigningKeyPass>
+		<AndroidLinkTool>r8</AndroidLinkTool>
+		<AndroidKeyStore>True</AndroidKeyStore>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android|AnyCPU'" />
+</Project>

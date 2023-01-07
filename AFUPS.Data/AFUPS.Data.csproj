@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SQLite" />
+    <None Remove="ByteSize" />
+    <None Remove="sqlite-net-pcl" />
+    <None Remove="APIModels\" />
+    <None Remove="IdentityModel.OidcClient" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ByteSize" Version="2.1.1" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="IdentityModel.OidcClient" Version="5.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="APIModels\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,43 @@
+﻿@page "/consent"
+@code{
+    [Inject]
+    private IConsent consentService { get; set; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+}
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Consent</h4>
+        <hr />
+    </div>
+    <div class="card-body" align="center">
+        <h6>By using this application, you agree to the details written below.</h6>
+        <div class="text-left">
+            <ul>
+                <li>I was aware of the following when I used this application.</li>
+                <li>The files I upload through this application will be published publicly on the internet.</li>
+                <li>The published archives are not password protected and all files will be publicly accessible.</li>
+                <li>The published files are held by the service provider chosen when the files are published and they determine the obligations regarding the uploaded files.</li>
+                <li>I have read the terms sheets* (<a href="/references">below "Default File Hosting Providers"</a>) of the service providers provided by the system and I am aware of the obligations.</li>
+                <li>The files you have uploaded may be unpublished without asking you.</li>
+                <li>You cannot unpublish files you have uploaded.</li>
+                <li>This application does not collect your data and your data remains on your device.</li>
+                <li>We do not accept any responsibility if the data on your device is accessed or shared.</li>
+            </ul>
+        </div>
+
+        @if (consentService.ConsentIsAccepted())
+        {
+            <span class="badge badge-success">This consent is accepted.</span>
+            <br />
+            <btn class="btn btn-primary btn-round" @onclick="()=> { NavigationManager.NavigateTo('/'.ToString()); }">Home</btn>
+        }
+        else
+        {
+            <btn class="btn btn-primary btn-round" @onclick="()=> { consentService.ConsentAccepted(); StateHasChanged(); }">I have read, understood and agree to the above consent text.</btn>
+        }
+        <hr />
+    </div>
+</div>

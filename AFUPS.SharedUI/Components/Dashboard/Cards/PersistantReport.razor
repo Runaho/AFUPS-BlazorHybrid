@@ -1,0 +1,75 @@
+﻿
+@code {
+    [Parameter]
+    public string TotalSize { get; set; }
+
+    [Parameter]
+    public string RemaningSize { get; set; }
+
+    [Parameter]
+    public string UploadedSize { get; set; }
+
+    [Parameter]
+    public bool IsLoggedIn { get; set; } = false;
+
+    [Inject]
+    private IPromptService promptService { get; set; }
+
+    [Inject]
+    private IAuth0UserService auth0UserService { get; set; }
+
+    [Inject]
+    private IAuth0Client Auth0Client { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Auth0Client.AuthClientEventCallback += () => LoggedIn();
+        return base.OnInitializedAsync();
+    }
+
+    private void DetailPrompt()
+    {
+        promptService.ShowAlert("What is Persitant Data?", "You can store your data permanently, download your uploads ad-free, delete uploaded files and download them encrypted. We provide these features with our self-developed EasyUpload.Cloud service.\nYou can use it for free by logging in.");
+    }
+
+    private void LoggedIn()
+    {
+        IsLoggedIn = auth0UserService.IsLoggedIn();
+        RemaningSize = "1.5 GB";
+        TotalSize = "2 GB";
+        UploadedSize = "500 MB";
+        StateHasChanged();
+    }
+}
+
+<div class="card card-stats">
+    <div class="card-body ">
+        <div class="row">
+            <div class="col-5 col-md-4">
+                <div class="icon-big text-center icon-warning">
+                    <i class="nc-icon nc-app text-success"></i>
+                </div>
+            </div>
+            <div class="col-7 col-md-8">
+                <div class="numbers">
+                    <p class="card-category">Persistand Data</p>
+                    @if (!IsLoggedIn)
+                    {
+                        <p class="text-success" style="font-size:medium" @onclick="() => DetailPrompt()">Click here for information.</p>
+                    }
+                    else
+                    {
+                        <p class="card-title">@RemaningSize</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <hr>
+        <div class="stats">
+            <i class="nc-icon nc-sound-wave"></i>
+            @TotalSize-@UploadedSize
+        </div>
+    </div>
+</div>
