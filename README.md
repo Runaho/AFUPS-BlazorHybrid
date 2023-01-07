@@ -11,9 +11,9 @@ You can also upload the archive to another provider if you want, archives and up
 I faced many difficulties in this implementation.
 Asynchronously, no matter where you are in the application, your operations continue without stopping, such as loading or getting files into memory.
 At the beginning, I was thinking of developing a version for the web, so the whole structure was developed as shared ui.
-But since the current structure is sqlite and transistent file interface, it is not technically possible to work on the web as server side app.
+But since the current structure is sqlite and transistent file interface, it is not technically possible to work on the web as a server side app.
 
-I converted it into a web application as WASM in the first place, but since service providers reject requests from cross-origin, file uploads cannot be done with wasm.
+I converted it into a web application as WASM in the first place, but since service providers reject requests from cross-origin, file uploads cannot be done with web.
 
 In order to prevent this, it is necessary to bring the app to the server side, but this time, due to the functioning of the application, file upload processes should be client-specific and not transistent.
 
