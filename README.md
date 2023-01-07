@@ -2,6 +2,8 @@
 
 ![Apple iPhone 11 Pro Max Presentation 2](https://user-images.githubusercontent.com/16222645/203026089-614ada3a-4784-49e4-b295-9713b2a932cd.png)
 
+[Google Play Store](https://play.google.com/store/apps/details?id=com.runaho.afup.mauiblazor) - AFUP
+
 AFUP is a cross-platform application I developed to upload and share files anonymously.
 You can simply archive your files and then upload the archived file to one of the providers.
 You can also upload the archive to another provider if you want, archives and uploads are developed in a one-to-many structure.
@@ -18,7 +20,11 @@ In order to prevent this, it is necessary to bring the app to the server side, b
 For this reason, I do not plan to publish the application on the web at the moment.
 If you want to contribute to the development process, you can fork and then have your development merge. I will be constantly checking the project and I will continue to improve it in the future.
 
-[Google Play Store](https://play.google.com/store/apps/details?id=com.runaho.afup.mauiblazor) - AFUP
+I added Auth0 for authentication, but in the future I plan to remove it and integrate  [Social Auth API](https://github.com/Runaho/SocialAuth.API) that I developed with .NET.
+That's why the current version is a bit ahead of the published version.
+
+<img width="1400" alt="Screenshot 2023-01-07 at 12 16 55" src="https://user-images.githubusercontent.com/16222645/211143869-b9e06c5c-2a57-4ca0-a48a-77c702c3df8a.png">
+
 
 * * *
 ##### Resources
@@ -51,5 +57,6 @@ For data security reasons and for the privacy of the sharer, the data is kept co
 *   Archive history & Calculating total created archive size.
 *   Zero data collecting.
 *   Zero AD Policy.
+*   Auth0
 
 * * *
